@@ -1,0 +1,34 @@
+﻿@model _25DH110847_MyStore.Models.ViewModel.OrderSearchVM
+
+@{
+    ViewBag.Title = "Danh sách đơn hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+@using (Html.BeginForm("Index", "Orders", FormMethod.Get, new { @class = "row g-3 align-items-end mb-4" }))
+{
+    <div class="col-md-3">
+        <label for="customerName" class="form-label">Tên khách hàng</label>
+        @Html.TextBox("customerName", Model.CustomerName, new { @class = "form-control", placeholder = "Nhập tên khách hàng" })
+    </div>
+    <div class="col-md-3">
+        <label for="paymentStatus" class="form-label">Trạng thái thanh toán</label>
+        <select id="paymentStatus" name="paymentStatus" class="form-select form-control">
+            <option value="">Tất cả trạng thái</option>
+            <option value="Chưa thanh toán" @(Model.PaymentStatus == "Chưa thanh toán" ? "selected" : "")>Chưa thanh toán</option>
+            <option value="Thanh toán tiền mặt" @(Model.PaymentStatus == "Thanh toán tiền mặt" ? "selected" : "")>Thanh toán tiền mặt</option>
+            <option value="Thanh toán paypal" @(Model.PaymentStatus == "Thanh toán paypal" ? "selected" : "")>Thanh toán PayPal</option>
+            <option value="Trả góp" @(Model.PaymentStatus == "Trả góp" ? "selected" : "")>Trả góp</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label for="orderDate" class="form-label">Ngày đặt hàng</label>
+        @Html.TextBox("orderDate", Model.OrderDate.HasValue ? Model.OrderDate.Value.ToString("yyyy-MM-dd") : "",
+            new { @class = "form-control", type = "date" })
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
+    </div>
+}
+
+@Html.Partial("PVListOrder", Model)

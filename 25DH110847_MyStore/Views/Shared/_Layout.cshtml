@@ -1,0 +1,163 @@
+﻿@using System.Linq
+@using _25DH110847_MyStore.Models.ViewModel
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title - My Store</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/bootstrap.css")" />
+
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/myStyle/Layout.css")" />
+
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <header class="customer-header">
+        <div class="navbar">
+            <a href="@Url.Action("Index", "Home")">
+                <img src="@Url.Content("~/Content/Img/Logo.png")"
+                     alt="My Store"
+                     class="logo" />
+            </a>
+        </div>
+
+        <div class="nav-location border-box">
+            <i class="fas fa-map-marker-alt"></i>
+            <div>
+                <span class="line-1">Deliver to</span>
+                <span class="line-2">Vietnam</span>
+            </div>
+        </div>
+
+        <div class="nav-search">
+            @using (Html.BeginForm("Index", "Home", FormMethod.Get))
+            {
+                <select name="categoryId" class="search-select">
+                    <option value="">All</option>
+                </select>
+
+                <input type="text"
+                       name="searchTerm"
+                       class="search-input"
+                       placeholder="Search Amazon" />
+
+                <button type="submit" class="search-button">
+                    <i class="fas fa-search"></i>
+                </button>
+            }
+        </div>
+
+        @{
+            var cartCount = new CartService(Session)
+                .GetCart()
+                .Items
+                .Sum(item => item.Quantity);
+        }
+
+    <div class="nav-tools">
+        <a href="@Url.Action("Login", "Account")" class="nav-item border-box">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <span class="line-1">Hello, @User.Identity.Name</span>
+            }
+            else
+            {
+                <span class="line-1">Sign in</span>
+            }
+        </a>
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            using (Html.BeginForm("Logout", "Account", new { area = "" },
+                FormMethod.Post, new { @class = "d-inline" }))
+            {
+                @Html.AntiForgeryToken()
+                <button type="submit" class="nav-item border-box"
+                        style="background: none; border: 0; color: inherit; cursor: pointer;">
+                    <span class="line-1">Logout</span>
+                </button>
+            }
+        }
+
+        <a href="@Url.Action("OrderHistory", "Order")" class="nav-item border-box">
+            <span class="line-1">Order History</span>
+        </a>
+
+        <a href="@Url.Action("Index", "Cart")" class="nav-cart border-box">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count">@cartCount</span>
+            <span class="cart-text">Cart</span>
+        </a>
+    </div>
+    </header>
+
+    <nav class="sub-nav">
+        <a href="@Url.Action("Index", "Home")">
+            <i class="fas fa-bars"></i> All
+        </a>
+        <a href="#">Today's Deals</a>
+        <a href="#">Prime Video</a>
+        <a href="#">Registry</a>
+        <a href="#">Gift Cards</a>
+        <a href="#">Customer Service</a>
+        <a href="#">Sell</a>
+    </nav>
+
+    <main class="main-container">
+        @RenderBody()
+    </main>
+
+    <footer class="customer-footer">
+        <div class="footer-columns">
+            <div class="footer-col">
+                <h4>Amazon Music</h4>
+                <ul>
+                    <li><a href="#">Stream millions of songs</a></li>
+                </ul>
+
+                <h4>Amazon Business</h4>
+                <ul>
+                    <li><a href="#">Everything for your business</a></li>
+                </ul>
+
+                <h4>IMDbPro</h4>
+                <ul>
+                    <li><a href="#">Information for entertainment professionals</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Amazon Ads</h4>
+                <ul>
+                    <li><a href="#">Reach customers wherever they spend their time</a></li>
+                </ul>
+
+                <h4>Amazon Global</h4>
+                <ul>
+                    <li><a href="#">Ship orders internationally</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="footer-bottom-links">
+                <a href="#">Conditions of Use</a>
+                <a href="#">Privacy Notice</a>
+                <a href="#">Your Ads Privacy Choices</a>
+            </div>
+
+            <p>&copy; 1996-@DateTime.Now.Year, Amazon.com, Inc. or its affiliates</p>
+        </div>
+    </footer>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

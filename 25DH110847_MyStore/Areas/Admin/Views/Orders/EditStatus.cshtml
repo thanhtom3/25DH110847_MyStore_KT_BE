@@ -1,0 +1,28 @@
+﻿@model _25DH110847_MyStore.Models.Order
+
+@{
+    ViewBag.Title = "Cập nhật trạng thái đơn hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="mt-4 mb-3">Cập nhật trạng thái đơn hàng #@Model.OrderID</h2>
+
+<div class="card" style="max-width: 640px;">
+    <div class="card-body">
+        <p><strong>Khách hàng:</strong> @(Model.Customer == null ? "(Không có thông tin)" : Model.Customer.CustomerName)</p>
+        <p><strong>Tổng giá trị:</strong> @Model.TotalAmount.ToString("N0")</p>
+
+        @using (Html.BeginForm("EditStatus", "Orders", new { id = Model.OrderID }, FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.Hidden("id", Model.OrderID)
+            <div class="form-group mb-3">
+                @Html.Label("orderStatus", "Trạng thái đơn hàng", new { @class = "form-label" })
+                @Html.DropDownList("orderStatus", (SelectList)ViewBag.OrderStatus, new { @class = "form-control form-select" })
+                @Html.ValidationMessage("orderStatus", "", new { @class = "text-danger" })
+            </div>
+            <button type="submit" class="btn btn-primary">Lưu trạng thái</button>
+            @Html.ActionLink("Hủy", "Details", new { id = Model.OrderID }, new { @class = "btn btn-secondary ms-2" })
+        }
+    </div>
+</div>

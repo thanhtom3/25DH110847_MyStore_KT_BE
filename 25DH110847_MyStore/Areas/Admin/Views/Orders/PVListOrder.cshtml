@@ -1,0 +1,67 @@
+﻿@model _25DH110847_MyStore.Models.ViewModel.OrderSearchVM
+@using System.Linq
+@using PagedList.Mvc
+
+@{
+    var dateSort = Model.SortOrder == "date_asc" ? "date_desc" : "date_asc";
+    var customerSort = Model.SortOrder == "customer_asc" ? "customer_desc" : "customer_asc";
+    var amountSort = Model.SortOrder == "amount_asc" ? "amount_desc" : "amount_asc";
+}
+
+<style>
+    .order-sort-link,
+    .order-sort-link:visited {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .order-sort-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+@if (Model.Orders != null && Model.Orders.Any())
+{
+    <h2 class="table-success">DANH SÁCH ĐƠN HÀNG</h2>
+    <table class="table table-info">
+        <thead class="table-success">
+            <tr>
+                <th>Ngày đặt hàng</th>
+                <th>Tên khách hàng</th>
+                <th>Tổng giá trị</th>
+                <th>Trạng thái thanh toán</th>
+                <th>Phương thức giao hàng</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model.Orders)
+            {
+                <tr>
+                    <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@(order.Customer == null ? "(Không có thông tin)" : order.Customer.CustomerName)</td>
+                    <td>@order.TotalAmount.ToString("N0")</td>
+                    <td>@order.PaymentStatus</td>
+                    <td>@order.DeliveryMethod</td>
+                    <td>@Html.ActionLink("Chi tiết đơn hàng", "Details", new { id = order.OrderID })</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="pagination-container">
+        @Html.PagedListPager(Model.Orders, page => Url.Action("Index", new
+        {
+            page,
+            customerName = Model.CustomerName,
+            paymentStatus = Model.PaymentStatus,
+            orderDate = Model.OrderDate?.ToString("yyyy-MM-dd"),
+            sortOrder = Model.SortOrder
+        }))
+    </div>
+}
+else
+{
+    <h2 class="bg-success">DANH SÁCH ĐƠN HÀNG</h2>
+    <p>KHÔNG CÓ đơn hàng phù hợp.</p>
+}

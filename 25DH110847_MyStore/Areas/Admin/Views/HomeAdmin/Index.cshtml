@@ -1,0 +1,84 @@
+﻿@{
+    ViewBag.Title = "Trang thống kê";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .order-table thead th {
+        background-color: #d1e7dd;
+    }
+
+    .order-table tbody tr:nth-child(odd) {
+        background-color: #cfeffc;
+    }
+
+    .order-table tbody tr:nth-child(even) {
+        background-color: #d9f2fa;
+    }
+</style>
+
+<h2>THỐNG KÊ</h2>
+
+<h3>Thông tin chung</h3>
+<table class="table table-bordered order-table">
+    <thead class="table-success">
+        <tr>
+            <th>Thông tin</th>
+            <th>Số liệu</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr >
+            <td >Tổng đơn hàng</td>
+            <td>@(ViewBag.TotalOrders ?? 0)</td>
+        </tr>
+        <tr>
+            <td>Tổng giá trị đơn hàng</td>
+            <td>@(((decimal?)ViewBag.TotalOrderValue ?? 0m).ToString("N0")) đ</td>
+        </tr>
+        <tr>
+            <td>Tổng khách hàng</td>
+            <td>@(ViewBag.TotalCustomers ?? 0)</td>
+        </tr>
+        <tr>
+            <td>Tổng sản phẩm</td>
+            <td>@(ViewBag.TotalProducts ?? 0)</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Đơn hàng theo trạng thái</h3>
+<table class="table table-bordered order-table">
+    <thead class="table-success">
+        <tr>
+            <th>Trạng thái</th>
+            <th>Số đơn hàng</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Chờ thanh toán</td>
+            <td>@(ViewBag.PendingOrders ?? 0)</td>
+        </tr>
+        <tr>
+            <td>Đang xử lý</td>
+            <td>@(ViewBag.ProcessingOrders ?? 0)</td>
+        </tr>
+        <tr>
+            <td>Đang vận chuyển</td>
+            <td>@(ViewBag.ShippingOrders ?? 0)</td>
+        </tr>
+        <tr>
+            <td>Đã giao</td>
+            <td>@(ViewBag.DeliveredOrders ?? 0)</td>
+        </tr>
+        <tr>
+            <td>Đã hủy</td>
+            <td>@(ViewBag.CancelledOrders ?? 0)</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+    @Html.ActionLink("Xem danh sách đơn hàng", "Index", "Orders", new { area = "Admin" }, new { @class = "btn btn-primary" })
+</p>

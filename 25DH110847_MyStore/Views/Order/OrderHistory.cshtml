@@ -1,0 +1,119 @@
+﻿@model _25DH110847_MyStore.Models.ViewModel.CustomerOrderHistoryVM
+@using System.Linq
+
+@{
+    ViewBag.Title = "Đơn hàng của tôi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .my-orders { max-width: 1100px; margin: 24px auto; }
+    .my-orders-search { display: flex; gap: 10px; margin: 18px 0; }
+    .my-orders-search input { flex: 1; }
+    .my-orders-tabs { display: flex; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid #ddd; margin: 18px 0; }
+    .my-orders-tabs a { color: #333; padding: 10px 14px; text-decoration: none; border-bottom: 3px solid transparent; }
+    .my-orders-tabs a.active { color: #0879c9; border-bottom-color: #0879c9; font-weight: 600; }
+    .my-orders-group { margin: 22px 0; }
+    .my-orders-card { border: 1px solid #ddd; border-radius: 8px; margin: 12px 0; background: #fff; overflow: hidden; }
+    .my-orders-card-head, .my-orders-card-foot { background: #f7f7f7; padding: 12px 16px; }
+    .my-orders-card-body { padding: 8px 16px; }
+    .my-orders-product { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid #eee; }
+    .my-orders-product img { width: 64px; height: 76px; object-fit: contain; }
+    .my-orders-product-info { flex: 1; }
+    .my-orders-actions { display: flex; justify-content: flex-end; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .my-orders-total { margin-right: auto; font-weight: 600; }
+    .my-orders-empty { padding: 36px 16px; text-align: center; background: #fff; border: 1px solid #ddd; border-radius: 8px; }
+    @@media (max-width: 600px) {
+        .my-orders-search { flex-direction: column; }
+        .my-orders-product img { width: 52px; }
+    }
+</style>
+
+<div class="my-orders">
+    <h2>Đơn hàng của tôi</h2>
+
+    <nav class="my-orders-tabs">
+        @foreach (var tab in Model.Tabs)
+        {
+            <a class="@(Model.ActiveStatus == tab.Key ? "active" : "")"
+               href="@Url.Action("OrderHistory", "Order", new { searchTerm = Model.SearchTerm, status = tab.Key })">@tab.Title</a>
+        }
+    </nav>
+
+    @using (Html.BeginForm("OrderHistory", "Order", FormMethod.Get, new { @class = "my-orders-search" }))
+    {
+        @Html.TextBox("searchTerm", Model.SearchTerm, new { @class = "form-control", placeholder = "Tìm theo mã đơn hàng hoặc tên sản phẩm" })
+        @Html.Hidden("status", Model.ActiveStatus)
+        <button type="submit" class="btn btn-primary">Tìm đơn hàng</button>
+    }
+
+    @if (!Model.Groups.Any())
+    {
+        <div class="my-orders-empty">
+            <p>BẠN CHƯA CÓ ĐƠN HÀNG NÀO. HÃY ĐẶT ĐƠN NGAY.</p>
+            @Html.ActionLink("Đến trang chủ", "Index", "Home", null, new { @class = "btn btn-primary" })
+        </div>
+    }
+    else
+    {
+        foreach (var group in Model.Groups)
+        {
+            <section class="my-orders-group">
+                <h3 class="h5">@group.Title</h3>
+                @foreach (var order in group.Orders)
+                {
+                    <article class="my-orders-card">
+                        <div class="my-orders-card-head">
+                            <strong>Đơn hàng #@order.OrderID</strong>
+                            <span class="text-muted"> · @order.OrderDate.ToString("dd/MM/yyyy HH:mm")</span>
+                            <span class="float-end">@order.OrderStatus</span>
+                        </div>
+                        <div class="my-orders-card-body">
+                            @foreach (var item in order.OrderDetails)
+                            {
+                                <div class="my-orders-product">
+                                    @if (item.Product != null && !string.IsNullOrWhiteSpace(item.Product.ProductImage))
+                                    {
+                                        <img src="@Url.Content(item.Product.ProductImage)" alt="@item.Product.ProductName" />
+                                    }
+                                    <div class="my-orders-product-info">
+                                        @if (item.Product != null)
+                                        {
+                                            @Html.ActionLink(item.Product.ProductName, "ProductDetails", "Home", new { id = item.ProductID }, null)
+                                        }
+                                        else
+                                        {
+                                            <span>Sản phẩm đã bị xóa</span>
+                                        }
+                                        <div class="text-muted">Số lượng: @item.Quantity</div>
+                                    </div>
+                                    <span>@((item.TotalPrice ?? item.UnitPrice * item.Quantity).ToString("N0")) đ</span>
+                                </div>
+                            }
+                        </div>
+                        <div class="my-orders-card-foot my-orders-actions">
+                            <span class="my-orders-total">Tổng tiền: @order.TotalAmount.ToString("N0") đ</span>
+                            @using (Html.BeginForm("BuyAgain", "Order", new { id = order.OrderID }, FormMethod.Post, new { style = "display:inline" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-outline-primary">Mua lại</button>
+                            }
+                            @{ var firstItem = order.OrderDetails.FirstOrDefault(item => item.Product != null); }
+                            @if (firstItem != null)
+                            {
+                                @Html.ActionLink("Xem chi tiết", "ProductDetails", "Home", new { id = firstItem.ProductID }, new { @class = "btn btn-primary" })
+                            }
+                        </div>
+                    </article>
+                }
+
+                @if (group.HasMore)
+                {
+                    @Html.ActionLink("Xem thêm", "OrderHistory", "Order",
+                             new { searchTerm = Model.SearchTerm, status = group.Key, showMore = true },
+                             new { @class = "btn btn-outline-secondary" })
+                }
+            </section>
+        }
+    }
+</div>
