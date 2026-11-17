@@ -187,7 +187,7 @@
     <Compile Include="Models\ViewModel\CartItem.cs" />
     <Compile Include="Models\ViewModel\CartService.cs" />
     <Compile Include="Models\ViewModel\CheckoutVM.cs" />
-    <Compile Include="Models\ViewModel\CustomerOrderHistoryVM.cs" />
+    <Compile Include="Models\ViewModel\MyOrderVM.cs" />
     <Compile Include="Models\ViewModel\HomeProductVM.cs" />
     <Compile Include="Models\ViewModel\LoginVM.cs" />
     <Compile Include="Models\ViewModel\OrderSearchVM.cs" />
@@ -301,7 +301,7 @@
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Order\Checkout.cshtml" />
     <Content Include="Views\Order\OrderSuccess.cshtml" />
-    <Content Include="Views\Order\OrderHistory.cshtml" />
+    <Content Include="Views\Order\MyOrder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -23,27 +23,31 @@ namespace _25DH110847_MyStore.Controllers
 
         public ActionResult Index()
         {
-            return RedirectToAction("OrderHistory");
+            return RedirectToAction("MyOrder");
         }
 
         // GET: Order/OrderHistory
         [Authorize]
-        public ActionResult OrderHistory(string searchTerm, string status, bool showMore = false)
+        public ActionResult MyOrder(string searchTerm, string status, bool showMore = false)
         {
             var customer = db.Customers.SingleOrDefault(c => c.Username == User.Identity.Name);
             if (customer == null)
                 return RedirectToAction("Login", "Account");
 
-            var model = new CustomerOrderHistoryVM
+            var model = new MyOrderVM
             {
                 SearchTerm = searchTerm,
                 ActiveStatus = string.IsNullOrWhiteSpace(status) ? "all" : status,
                 ShowMore = showMore
             };
-            model.Tabs.Add(new CustomerOrderStatusTabVM { Key = "all", Title = "Tất cả đơn" });
-            model.Tabs.AddRange(OrderStatuses.Select(s => new CustomerOrderStatusTabVM { Key = s.Key, Title = s.Value }));
+            model.Tabs.Add(new MyOrderStatusTabVM { 
+                Key = "all", Title = "Tất cả đơn" });
+            model.Tabs.AddRange(OrderStatuses.Select(
+                s => new MyOrderStatusTabVM { 
+                    Key = s.Key, Title = s.Value }));
 
-            if (model.ActiveStatus != "all" && !OrderStatuses.Any(s => s.Key == model.ActiveStatus))
+            if (model.ActiveStatus != "all" && 
+                !OrderStatuses.Any(s => s.Key == model.ActiveStatus))
                 model.ActiveStatus = "all";
 
             var orders = db.Orders
@@ -82,7 +86,7 @@ namespace _25DH110847_MyStore.Controllers
                     continue;
 
                 var limit = model.ActiveStatus != "all" && showMore ? 50 : 2;
-                model.Groups.Add(new CustomerOrderHistoryGroupVM
+                model.Groups.Add(new MyOrderGroupVM
                 {
                     Key = orderStatus.Key,
                     Title = orderStatus.Value,
@@ -186,9 +190,15 @@ namespace _25DH110847_MyStore.Controllers
             var paymentStatus = "Chưa thanh toán";
             switch (model.PaymentMethod)
             {
-                case "Tiền mặt": paymentStatus = "Thanh toán tiền mặt"; break;
-                case "Paypal": paymentStatus = "Thanh toán paypal"; break;
-                case "Mua trước trả sau": paymentStatus = "Trả góp"; break;
+                case "Tiền mặt": 
+                    paymentStatus = "Thanh toán tiền mặt"; 
+                    break;
+                case "Paypal": 
+                    paymentStatus = "Thanh toán paypal"; 
+                    break;
+                case "Mua trước trả sau": 
+                    paymentStatus = "Trả góp"; 
+                    break;
             }
 
             var order = new Order

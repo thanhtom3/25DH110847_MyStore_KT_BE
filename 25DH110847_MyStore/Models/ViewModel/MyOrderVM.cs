@@ -3,22 +3,22 @@ using _25DH110847_MyStore.Models;
 
 namespace _25DH110847_MyStore.Models.ViewModel
 {
-    public class CustomerOrderHistoryVM
+    public class MyOrderVM
     {
         public string SearchTerm { get; set; }
         public string ActiveStatus { get; set; }
         public bool ShowMore { get; set; }
-        public List<CustomerOrderStatusTabVM> Tabs { get; set; } = new List<CustomerOrderStatusTabVM>();
-        public List<CustomerOrderHistoryGroupVM> Groups { get; set; } = new List<CustomerOrderHistoryGroupVM>();
+        public List<MyOrderStatusTabVM> Tabs { get; set; } = new List<MyOrderStatusTabVM>();
+        public List<MyOrderGroupVM> Groups { get; set; } = new List<MyOrderGroupVM>();
     }
 
-    public class CustomerOrderStatusTabVM
+    public class MyOrderStatusTabVM
     {
         public string Key { get; set; }
         public string Title { get; set; }
     }
 
-    public class CustomerOrderHistoryGroupVM
+    public class MyOrderGroupVM
     {
         public string Key { get; set; }
         public string Title { get; set; }
